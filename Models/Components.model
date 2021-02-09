@@ -1,0 +1,33 @@
+model "My_Model1" {
+
+    configuration {
+        active_features = feature1, feature2, feature3
+    }
+
+    component "TopLevelComponent1" {
+        require = feature1 and feature2
+
+        component "SubComponent1" {
+            require = feature3
+        }
+
+        component "SubComponent2" {
+            require = feature2 and feature4
+        }
+    }
+
+    component "TopLevelComponent2" {
+        require = feature5
+    }
+
+    component "TopLevelComponent3" {
+        require = (feature1 or feature4) and feature2
+    }
+
+    component "TopLevelComponent4"{
+
+        component "SubComponent3" {
+            require = feature8
+        }
+    }
+}

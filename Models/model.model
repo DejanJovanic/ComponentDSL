@@ -1,0 +1,1 @@
+require = (( (feature1 or feature2) and (feature3 and feature4) ) or (feature5 or feature6) ) and ((feature7 or feature8) and (feature9 or feature10))

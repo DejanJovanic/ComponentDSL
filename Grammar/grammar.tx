@@ -1,0 +1,39 @@
+main:
+    Model
+;
+
+Config:
+    "configuration" "{"
+        ("active_features" "=" active_features *= ID[','])?
+    "}"
+;
+
+Component:
+    "component" name=STRING "{"
+        requirement = require? components*=Component
+    "}"
+;
+
+Model:
+    "model" name=STRING "{"
+        config = Config?
+        components*=Component
+    "}"
+;
+
+require:
+    "require" "="  requireRule
+;
+requireRule:
+    ExpressionAND | ExpressionOR |  ID
+;
+ExpressionAND :
+    left = part "and" right = part
+;
+ExpressionOR:
+    left = part "or" right = part
+;
+
+part:
+    ID | "(" ExpressionAND ")" | "(" ExpressionOR ")"
+;
