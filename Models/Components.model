@@ -31,3 +31,9 @@ model "My_Model1" {
         }
     }
 }
+model "Model2"{
+
+    component "TopLevelComponent1"{
+        require = a1
+    }
+}

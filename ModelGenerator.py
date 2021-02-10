@@ -5,6 +5,7 @@ from Classes.Config import Config
 from Classes.expressionAND import ExpressionAND
 from Classes.expressionOR import ExpressionOR
 from Classes.Model import Model
+from Classes.Models import Models
 
 
 def check_name(model_name):
@@ -24,11 +25,21 @@ def check_component_tree_name(component, names):
 
 
 def validate_names(model, metamodel):
-    if isinstance(model, Model):
-        check_name(model.name)
-        names = []
-        for component in model.components or []:
-            check_component_tree_name(component, names)
+    if isinstance(model, Models):
+        components_names_by_model = []
+        models_names = []
+        for item in model.models or []:
+            check_name(item.name)
+            names = []
+            models_names.append(item.name)
+            for component in item.components or []:
+                check_component_tree_name(component, names)
+            components_names_by_model.append(names)
+        for name in models_names:
+            for comp_names in components_names_by_model:
+                if name in comp_names:
+                    raise TextXSemanticError("Model name {name} already taken by another model or component"
+                                             .format(name=name))
 
 
 def check_feature_names(config):
@@ -42,7 +53,7 @@ def check_feature_names(config):
 
 def extract_model_path(model_path):
     metamodel = metamodel_from_file('Grammar/grammar.tx', classes=[Model, Config,
-                                                                   Component, ExpressionAND, ExpressionOR])
+                                                                   Component, ExpressionAND, ExpressionOR, Models])
     metamodel.register_model_processor(validate_names)
     metamodel.register_obj_processors({'Config': check_feature_names})
     model = metamodel.model_from_file(model_path)

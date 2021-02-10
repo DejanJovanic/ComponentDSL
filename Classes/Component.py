@@ -31,13 +31,14 @@ class Component:
     def __set_self_enable(self, config):
         if isinstance(self.requirement, str):
             if self.requirement.strip():
-                self.enabled = self.requirement in config.active_features
+                self.enabled = self.requirement in config.active_features if config is not None else []
             else:
                 self.enabled = True
         else:
-            self.enabled = self.requirement.evaluate(config.active_features)
+            self.enabled = self.requirement.evaluate(config.active_features if config is not None else [])
 
     def validate(self, config):
+
         if len(self.components) == 0:
             self.__set_self_enable(config)
         else:
