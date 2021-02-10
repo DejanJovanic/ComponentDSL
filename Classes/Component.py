@@ -19,36 +19,34 @@ class Component:
             self.requirement = None
         self.components = kwargs['components']
         self.requirement_expression = ""
-        self.required_features = []
-        self.disabled = False
+        self.enabled = False
 
     def validate(self, config):
         if len(self.components) == 0:
-            expr, items = get_required_expression(self.requirement)
-            self.requirement_expression = expr
-            self.required_features = items
-            if len(items) > 1:
-                params = {item: (item in config.active_features) for item in items}
-                ret = eval(self.requirement_expression, {}, params)
-                self.disabled = not ret
+            if isinstance(self.requirement, str):
+                self.enabled = self.requirement in config.active_features
             else:
-                self.disabled = not items[0] in config.active_features
-        if self.disabled:
-            pass #Quine-McCluskey
+                self.enabled = self.requirement.evaluate(config.active_features)
         else:
-            expr, req_items = get_required_expression(self.requirement)
-            disabled_components = []
             for component in self.components:
-                component.validate(config)
-                req_items.extend([item for item in component.required_features if item not in req_items])
-                if component.disabled:
-                    self.disabled = True
-                    disabled_components.append(component)
-                if expr:
-                    expr = " ( " + expr + " ) and ( " + component.requirement_expression + " ) "
-                else:
-                    expr = component.requirement_expression
-            self.requirement_expression = expr
-            self.required_features = req_items
-            if self.disabled:
-                pass #Quine-McCluskey
+                component.validate()
+                if not component.enabled:
+                    self.enabled = False
+            if self.enabled:
+                self.enabled = self.requirement.evaluate(config.active_features)
+
+    def set_disabled_reason(self):
+        if not self.enabled:
+            if len(self.components) == 0:
+                expr, items = get_required_expression(self.requirement)
+                self.requirement_expression = expr
+            else:
+                expr, req_items = get_required_expression(self.requirement)
+                for component in [item for item in self.components if not item.enabled]:
+                    component.set_disabled_reason()
+                    if not expr:
+                        expr = component.requirement_expression
+                    else:
+                        expr = " ( " + expr + " ) and ( " + component.requirement_expression + " ) "
+                self.requirement_expression = expr
+            ## Quine-McCluskey

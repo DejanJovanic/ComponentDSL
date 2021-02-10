@@ -1,4 +1,7 @@
-class Expression:
+from abc import ABC, abstractmethod
+
+
+class Expression(ABC):
     def __init__(self, left, right, operation):
         self.left = left
         self.right = right
@@ -34,3 +37,7 @@ class Expression:
             expression = " ( " + expr_left + " ) " + self.operation + " ( " + expr_right + " ) "
 
         return expression, requirements
+
+    @abstractmethod
+    def evaluate(self, features):
+        pass
