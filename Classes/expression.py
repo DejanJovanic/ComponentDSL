@@ -9,7 +9,7 @@ class Expression(ABC):
 
     def get_expression(self):
         """
-
+        Metoda koja odredjuje string verziju required logickog izraza
         :return:
             tuple a,b -> a string koji predstavlja boolean izraz, b je lista koja sadrzi elemente u izrazu
         """
@@ -25,13 +25,13 @@ class Expression(ABC):
             expression = self.left + " " + self.operation + " ( " + expr + " ) "
         elif isinstance(self.right, str):
             expr, req = self.left.get_expression()
-            requirements.extend([item for item in req if item not in requirements])
+            requirements = req
             if self.right not in requirements:
                 requirements.append(self.right)
             expression = " ( " + expr + " ) " + self.operation + " " + self.right
         else:
             expr_left, req_left = self.left.get_expression()
-            requirements.extend([item for item in req_left if item not in requirements])
+            requirements = req_left
             expr_right, req_right = self.right.get_expression()
             requirements.extend([item for item in req_right if item not in requirements])
             expression = " ( " + expr_left + " ) " + self.operation + " ( " + expr_right + " ) "

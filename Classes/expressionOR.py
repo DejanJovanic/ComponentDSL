@@ -16,8 +16,11 @@ class ExpressionOR(Expression):
             left_bool = self.left in features
         elif isinstance(self.left, Expression):
             left_bool = self.left.evaluate(features)
+        if left_bool:
+            return True
+
         if isinstance(self.right, str):
             right_bool = self.right in features
         elif isinstance(self.right, Expression):
-            left_bool = self.right.evaluate(features)
+            right_bool = self.right.evaluate(features)
         return left_bool or right_bool

@@ -1,11 +1,14 @@
+from Minimize_expression import simplify
+
+
 def get_required_expression(require):
-    if require is not None:
-        if isinstance(require, str):
+    if isinstance(require, str):
+        if require.strip():
             return require, [require]
         else:
-            return require.get_expression()
+            return "", []
     else:
-        return "", []
+        return require.get_expression()
 
 
 class Component:
@@ -15,33 +18,43 @@ class Component:
         self.name = kwargs['name']
         if 'requirement' in kwargs:
             self.requirement = kwargs['requirement']
+            if self.requirement is None:
+                self.requirement = ""
         else:
-            self.requirement = None
+            self.requirement = ""
         self.components = kwargs['components']
         self.requirement_expression = ""
+        self.simplified_requirement_expression = ""
+        self.disabled_reason = ""
         self.enabled = False
+
+    def __set_self_enable(self, config):
+        if isinstance(self.requirement, str):
+            if self.requirement.strip():
+                self.enabled = self.requirement in config.active_features
+            else:
+                self.enabled = True
+        else:
+            self.enabled = self.requirement.evaluate(config.active_features)
 
     def validate(self, config):
         if len(self.components) == 0:
-            if isinstance(self.requirement, str):
-                self.enabled = self.requirement in config.active_features
-            else:
-                self.enabled = self.requirement.evaluate(config.active_features)
+            self.__set_self_enable(config)
         else:
-            for component in self.components:
-                component.validate()
+            for component in self.components or []:
+                component.validate(config)
                 if not component.enabled:
                     self.enabled = False
             if self.enabled:
-                self.enabled = self.requirement.evaluate(config.active_features)
+                self.__set_self_enable(config)
 
     def set_disabled_reason(self):
         if not self.enabled:
             if len(self.components) == 0:
-                expr, items = get_required_expression(self.requirement)
+                expr, _ = get_required_expression(self.requirement)
                 self.requirement_expression = expr
             else:
-                expr, req_items = get_required_expression(self.requirement)
+                expr, _ = get_required_expression(self.requirement)
                 for component in [item for item in self.components if not item.enabled]:
                     component.set_disabled_reason()
                     if not expr:
@@ -49,4 +62,6 @@ class Component:
                     else:
                         expr = " ( " + expr + " ) and ( " + component.requirement_expression + " ) "
                 self.requirement_expression = expr
-            ## Quine-McCluskey
+            self.simplified_requirement_expression = simplify(self.requirement_expression)
+            self.disabled_reason = "Feature requirement ({expr}) has not been met"\
+                .format(expr=self.simplified_requirement_expression)
