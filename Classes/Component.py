@@ -26,7 +26,7 @@ class Component:
         self.requirement_expression = ""
         self.simplified_requirement_expression = ""
         self.disabled_reason = ""
-        self.enabled = False
+        self.enabled = True
 
     def __set_self_enable(self, config):
         if isinstance(self.requirement, str):

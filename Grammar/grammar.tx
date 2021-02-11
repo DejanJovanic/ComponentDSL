@@ -1,5 +1,5 @@
 main:
-   Config | Models | Component | RequireRule
+   Config | Models | Component
 ;
 
 Models:
@@ -28,15 +28,29 @@ Require:
     "require" "="  RequireRule
 ;
 RequireRule:
-    ExpressionAND | ExpressionOR |  ID
+    ExpressionOR | ExpressionAND | ID
+
 ;
 ExpressionAND :
-    left = part "and" right = part
-;
-ExpressionOR:
-    left = part "or" right = part
+    left = Part "and" right = Part
 ;
 
-part:
-    ID | "(" ExpressionAND ")" | "(" ExpressionOR ")"
+ExpressionOR:
+    left = Part "or" right = Part
+;
+
+NonGathered:
+    ExpressionAND | ExpressionOR
+;
+
+Gathered:
+    "(" ExpressionAND ")" | "(" ExpressionOR ")"
+;
+
+Part:
+      ID | Gathered | NonGathered
+;
+
+Comment:
+  /\/\/.*$/
 ;

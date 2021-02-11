@@ -8,7 +8,7 @@ model "My_Model1" {
         require = feature1 and feature2
 
         component "SubComponent1" {
-            require = feature3
+           require = feature3
         }
 
         component "SubComponent2" {
@@ -34,6 +34,10 @@ model "My_Model1" {
 model "Model2"{
 
     component "TopLevelComponent1"{
-        require = a1
+       require = (req1 or req2) and (req1 or req3)
+    }
+    component "TopLevelComponent2"{
+       // require = (a and b) or (a and (b or c)) or (b and (b or c))
+       //require = a and b and c
     }
 }
