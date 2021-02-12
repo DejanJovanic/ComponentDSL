@@ -1,7 +1,7 @@
-from .expression import Expression
 
 
-class ExpressionOR(Expression):
+
+class ExpressionOR:
     def __init__(self, **kwargs):
         self.left = kwargs['left']
         self.right = kwargs['right']

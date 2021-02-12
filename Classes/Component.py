@@ -4,9 +4,9 @@ from Minimize_expression import simplify
 def get_required_expression(require):
     if isinstance(require, str):
         if require.strip():
-            return require, [require]
+            return require
         else:
-            return "", []
+            return ""
     else:
         return require.get_expression()
 
@@ -52,10 +52,10 @@ class Component:
     def set_disabled_reason(self):
         if not self.enabled:
             if len(self.components) == 0:
-                expr, _ = get_required_expression(self.requirement)
+                expr = get_required_expression(self.requirement)
                 self.requirement_expression = expr
             else:
-                expr, _ = get_required_expression(self.requirement)
+                expr = get_required_expression(self.requirement)
                 for component in [item for item in self.components if not item.enabled]:
                     component.set_disabled_reason()
                     if not expr:

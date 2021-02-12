@@ -1,7 +1,7 @@
-from Classes.Term import Term
+import Classes.expression as expres
 
 
-class Expression:
+class Term:
     def __init__(self, **kwargs):
         self.left = kwargs['left']
         self.right = kwargs['right']
@@ -12,15 +12,17 @@ class Expression:
 
     def get_expression(self):
         expr = ""
-        if self.left is not None:
-            expr = self.left.get_expression()
+        if isinstance(self.left, expres.Expression):
+            expr = "( " + self.left.get_expression() + " )"
+        else:
+            expr = self.left
 
         if self.right is not None and len(self.right) > 0:
             for term in self.right:
                 if isinstance(term, str):
-                    expr = expr + " or " + term
-                elif isinstance(term, Term):
-                    expr = expr + " or " + term.get_expression()
+                    expr = expr + " and " + term
+                elif isinstance(term, expres.Expression):
+                    expr = expr + " and ( " + term.get_expression() + " ) "
 
         return expr
 
@@ -32,8 +34,8 @@ class Expression:
                 left_bool = self.left in features or []
             else:
                 left_bool = self.left.evaluate(features)
-        if left_bool:
-            return True
+        if not left_bool:
+            return False
         total_bool = left_bool
         if self.right is not None and len(self.right) > 0:
             for term in self.right:
@@ -42,9 +44,12 @@ class Expression:
                     temp = term in features or []
                 else:
                     temp = term.evaluate(features)
-                total_bool = total_bool or temp
-                if total_bool:
+                total_bool = total_bool and temp
+                if not total_bool:
                     break
             return total_bool
         else:
             return left_bool
+
+
+

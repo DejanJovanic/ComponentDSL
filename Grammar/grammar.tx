@@ -17,6 +17,7 @@ Component:
     "}"
 ;
 
+
 Model:
     "model" name=STRING "{"
         config = Config?
@@ -28,27 +29,17 @@ Require:
     "require" "="  RequireRule
 ;
 RequireRule:
-    ExpressionOR | ExpressionAND | ID
-
-;
-ExpressionAND :
-    left = Part "and" right = Part
+    Expression
 ;
 
-ExpressionOR:
-    left = Part "or" right = Part
+Expression:
+    left=Term ("or" right=Term)*
 ;
-
-NonGathered:
-    ExpressionAND | ExpressionOR
+Term:
+    left=Boolean ("and" right=Boolean)*
 ;
-
-Gathered:
-    "(" ExpressionAND ")" | "(" ExpressionOR ")"
-;
-
-Part:
-      ID | Gathered | NonGathered
+Boolean:
+    ID |  ("(" Expression ")")
 ;
 
 Comment:

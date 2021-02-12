@@ -2,8 +2,8 @@ from textx import metamodel_from_file, TextXSemanticError
 
 from Classes.Component import Component
 from Classes.Config import Config
-from Classes.expressionAND import ExpressionAND
-from Classes.expressionOR import ExpressionOR
+from Classes.expression import Expression
+from Classes.Term import Term
 from Classes.Model import Model
 from Classes.Models import Models
 
@@ -53,7 +53,7 @@ def check_feature_names(config):
 
 def extract_model_path(model_path):
     metamodel = metamodel_from_file('Grammar/grammar.tx', classes=[Model, Config,
-                                                                   Component, ExpressionAND, ExpressionOR, Models])
+                                                                   Component, Expression, Term,  Models])
     metamodel.register_model_processor(validate_names)
     metamodel.register_obj_processors({'Config': check_feature_names})
     model = metamodel.model_from_file(model_path)
@@ -63,7 +63,7 @@ def extract_model_path(model_path):
 
 def extract_model_string(model_string):
     metamodel = metamodel_from_file('Grammar/grammar.tx', classes=[Model, Config,
-                                                                   Component, ExpressionAND, ExpressionOR])
+                                                                   Component, Expression, Term, Models])
     metamodel.register_model_processor(validate_names)
     metamodel.register_obj_processors({'Config': check_feature_names})
     model = metamodel.model_from_str(model_string)

@@ -1,7 +1,7 @@
-from .expression import Expression
 
 
-class ExpressionAND(Expression):
+
+class ExpressionAND(Expression1):
     def __init__(self, **kwargs):
         self.left = kwargs['left']
         self.right = kwargs['right']

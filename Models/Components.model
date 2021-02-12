@@ -21,7 +21,7 @@ model "My_Model1" {
     }
 
     component "TopLevelComponent3" {
-        require = (feature1 or feature4) and feature2
+        require = (feature4 or feature1) and feature2
     }
 
     component "TopLevelComponent4"{
@@ -33,11 +33,15 @@ model "My_Model1" {
 }
 model "Model2"{
 
-    component "TopLevelComponent1"{
+    component "TopLevelComponent5"{
        require = (req1 or req2) and (req1 or req3)
     }
-    component "TopLevelComponent2"{
-       // require = (a and b) or (a and (b or c)) or (b and (b or c))
-       //require = a and b and c
+    component "TopLevelComponent6"{
+        require = (a and b) or (a and (b or c)) or ( (b or c) and b)
+       //require = a or b and c
+    }
+      component "TopLevelComponent7"{
+
+       require = a or b and ( c or e ) and f
     }
 }
