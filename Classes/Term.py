@@ -13,7 +13,7 @@ class Term:
     def get_expression(self):
         expr = ""
         if isinstance(self.left, expres.Expression):
-            expr = "( " + self.left.get_expression() + " )"
+            expr = "(" + self.left.get_expression() + ")"
         else:
             expr = self.left
 
@@ -22,7 +22,7 @@ class Term:
                 if isinstance(term, str):
                     expr = expr + " and " + term
                 elif isinstance(term, expres.Expression):
-                    expr = expr + " and ( " + term.get_expression() + " ) "
+                    expr = expr + " and (" + term.get_expression() + ")"
 
         return expr
 
@@ -36,7 +36,7 @@ class Term:
                 left_bool = self.left.evaluate(features)
         if not left_bool:
             return False
-        total_bool = left_bool
+
         if self.right is not None and len(self.right) > 0:
             for term in self.right:
                 temp = False
@@ -44,10 +44,10 @@ class Term:
                     temp = term in features or []
                 else:
                     temp = term.evaluate(features)
-                total_bool = total_bool and temp
-                if not total_bool:
-                    break
-            return total_bool
+
+                if not temp:
+                    return False
+            return True
         else:
             return left_bool
 

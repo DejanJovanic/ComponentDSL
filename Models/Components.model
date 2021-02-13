@@ -45,3 +45,25 @@ model "Model2"{
        require = a or b and ( c or e ) and f
     }
 }
+model 'Model1'{
+    configuration{
+        active_features = a,b,c,d
+    }
+
+    component "Comp1" {
+        require = (a and g) or (b and f)
+
+        component "Comp2" {
+            require = a and f
+        }
+
+        component "Comp3"{
+            require = (a or b) and (g or f)
+        }
+
+        component "Comp4"{
+            require = f
+        }
+
+    }
+}

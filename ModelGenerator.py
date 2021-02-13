@@ -23,8 +23,7 @@ def check_component_tree_name(component, names):
     for comp in component.components or []:
         check_component_tree_name(comp, names)
 
-
-def validate_names(model, metamodel):
+def model_validation(model):
     if isinstance(model, Models):
         components_names_by_model = []
         models_names = []
@@ -42,6 +41,22 @@ def validate_names(model, metamodel):
                                              .format(name=name))
 
 
+def model_check(model):
+    if isinstance(model, Models):
+        for item in model.models:
+            for curr_comp in item.components:
+                curr_comp.validate(item.config)
+
+        for item in model.models:
+            for curr_comp in item.components:
+                curr_comp.set_disabled_reason()
+
+
+def model_setup(model, metamodel):
+    model_validation(model)
+    model_check(model)
+
+
 def check_feature_names(config):
     elements = set()
     for elem in config.active_features or []:
@@ -54,7 +69,7 @@ def check_feature_names(config):
 def extract_model_path(model_path):
     metamodel = metamodel_from_file('Grammar/grammar.tx', classes=[Model, Config,
                                                                    Component, Expression, Term,  Models])
-    metamodel.register_model_processor(validate_names)
+    metamodel.register_model_processor(model_setup)
     metamodel.register_obj_processors({'Config': check_feature_names})
     model = metamodel.model_from_file(model_path)
 
@@ -64,7 +79,7 @@ def extract_model_path(model_path):
 def extract_model_string(model_string):
     metamodel = metamodel_from_file('Grammar/grammar.tx', classes=[Model, Config,
                                                                    Component, Expression, Term, Models])
-    metamodel.register_model_processor(validate_names)
+    metamodel.register_model_processor(model_setup)
     metamodel.register_obj_processors({'Config': check_feature_names})
     model = metamodel.model_from_str(model_string)
 

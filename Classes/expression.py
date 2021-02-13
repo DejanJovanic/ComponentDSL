@@ -34,7 +34,7 @@ class Expression:
                 left_bool = self.left.evaluate(features)
         if left_bool:
             return True
-        total_bool = left_bool
+
         if self.right is not None and len(self.right) > 0:
             for term in self.right:
                 temp = False
@@ -42,9 +42,8 @@ class Expression:
                     temp = term in features or []
                 else:
                     temp = term.evaluate(features)
-                total_bool = total_bool or temp
-                if total_bool:
-                    break
-            return total_bool
+                if temp:
+                    return True
+            return False
         else:
             return left_bool

@@ -61,7 +61,7 @@ class Component:
                     if not expr:
                         expr = component.requirement_expression
                     else:
-                        expr = " ( " + expr + " ) and ( " + component.requirement_expression + " ) "
+                        expr = expr + " and " + component.requirement_expression
                 self.requirement_expression = expr
             self.simplified_requirement_expression = simplify(self.requirement_expression)
             self.disabled_reason = "Feature requirement ({expr}) has not been met"\
