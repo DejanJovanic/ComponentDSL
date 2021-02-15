@@ -6,6 +6,8 @@ from Classes.expression import Expression
 from Classes.Term import Term
 from Classes.Model import Model
 from Classes.Models import Models
+from ComponentValidator import ComponentValidator
+from ExplanationGenerator import ExplanationGenerator
 
 
 def check_name(model_name):
@@ -42,14 +44,11 @@ def model_validation(model):
 
 
 def model_check(model):
+    cv = ComponentValidator()
+    ex = ExplanationGenerator()
     if isinstance(model, Models):
-        for item in model.models:
-            for curr_comp in item.components:
-                curr_comp.validate(item.config)
-
-        for item in model.models:
-            for curr_comp in item.components:
-                curr_comp.set_disabled_reason()
+        cv.validate_models(model)
+        ex.set_models_disable_explanation(model)
 
 
 def model_setup(model, metamodel):

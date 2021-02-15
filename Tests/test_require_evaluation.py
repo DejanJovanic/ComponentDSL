@@ -18,7 +18,7 @@ def test_invalid_requirement1():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == 'a and b and f and c'
-    assert component.simplified_requirement_expression == 'a and b and c and f'
+    assert 'a and b and c and f' in component.disabled_reason
 
 
 def test_invalid_requirement2():
@@ -38,7 +38,7 @@ def test_invalid_requirement2():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and f) or (f or z) or (c and g)'
-    assert component.simplified_requirement_expression == 'f or z or (c and g)'.lower()
+    assert 'f or z or (c and g)'.lower() in component.disabled_reason
 
 
 def test_invalid_requirement3():
@@ -58,7 +58,7 @@ def test_invalid_requirement3():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == 'a and b and (c and g)'
-    assert component.simplified_requirement_expression == 'a AND b AND c AND g'.lower()
+    assert 'a AND b AND c AND g'.lower() in component.disabled_reason
 
 
 def test_invalid_requirement4():
@@ -78,7 +78,7 @@ def test_invalid_requirement4():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a or e) and (f or g)'
-    assert component.simplified_requirement_expression == '(a AND f) OR (a AND g) OR (e AND f) OR (e AND g)'.lower()
+    assert '(a AND f) OR (a AND g) OR (e AND f) OR (e AND g)'.lower() in component.disabled_reason
 
 
 def test_invalid_requirement5():
@@ -98,7 +98,7 @@ def test_invalid_requirement5():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and b) or (a and (b or c)) or ((b or c) and b)'
-    assert component.simplified_requirement_expression == 'b or (a AND c)'.lower()
+    assert 'b or (a AND c)'.lower() in component.disabled_reason
 
 
 def test_invalid_requirement6():
@@ -118,7 +118,7 @@ def test_invalid_requirement6():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and b) or (a and (b or c)) and ((b or c) and b)'
-    assert component.simplified_requirement_expression == 'a AND b'.lower()
+    assert 'a AND b'.lower() in component.disabled_reason
 
 
 def test_invalid_gathered_requirement1():
@@ -142,11 +142,11 @@ def test_invalid_gathered_requirement1():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and b) or a and d and a and f'
-    assert component.simplified_requirement_expression == 'a AND (b OR d) AND (b OR f)'.lower()
+    assert 'a AND (b OR d) AND (b OR f)'.lower() in component.disabled_reason
 
     assert not component.components[0].enabled
     assert component.components[0].requirement_expression == 'a and f'
-    assert component.components[0].simplified_requirement_expression == 'a and f'.lower()
+    assert 'a and f'.lower() in component.components[0].disabled_reason
 
 
 def test_invalid_gathered_requirement2():
@@ -170,7 +170,7 @@ def test_invalid_gathered_requirement2():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and g) or (b and f)'
-    assert component.simplified_requirement_expression == '(a OR b) AND (a OR f) AND (b OR g) AND (f OR g)'.lower()
+    assert '(a OR b) AND (a OR f) AND (b OR g) AND (f OR g)'.lower() in component.disabled_reason
 
     assert component.components[0].enabled
 
@@ -205,20 +205,19 @@ def test_invalid_gathered_requirement3():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and g) or (b and f) and a and f and (a or b) and (g or f) and f'
-    assert component.simplified_requirement_expression == 'a AND (b OR g) AND (f OR g)'.lower()
+    assert 'a AND (b OR g) AND (f OR g)'.lower() in component.disabled_reason
 
     assert not component.components[0].enabled
     assert component.components[0].requirement_expression == 'a and f'
-    assert component.components[0].simplified_requirement_expression == 'a and f'.lower()
+    assert 'a and f'.lower() in component.components[0].disabled_reason
 
     assert not component.components[1].enabled
     assert component.components[1].requirement_expression == '(a or b) and (g or f)'
-    assert component.components[1].simplified_requirement_expression == '(a AND f) OR (a AND g) OR (b AND f) OR (b ' \
-                                                                        'AND g)'.lower()
+    assert '(a AND f) OR (a AND g) OR (b AND f) OR (b AND g)'.lower() in component.components[1].disabled_reason
 
     assert not component.components[2].enabled
     assert component.components[2].requirement_expression == 'f'
-    assert component.components[2].simplified_requirement_expression == 'f'.lower()
+    assert 'f' in component.components[2].disabled_reason
 
 
 def test_invalid_gathered_requirement4():
@@ -246,11 +245,11 @@ def test_invalid_gathered_requirement4():
     component = model.models[0].components[0]
     assert not component.enabled
     assert component.requirement_expression == '(a and g) or (b and f) and a and f'
-    assert component.simplified_requirement_expression == 'a AND (b OR g) AND (f OR g)'.lower()
+    assert 'a AND (b OR g) AND (f OR g)'.lower() in component.disabled_reason
 
     assert not component.components[0].enabled
     assert component.components[0].requirement_expression == 'a and f'
-    assert component.components[0].simplified_requirement_expression == 'a and f'.lower()
+    assert 'a and f' in component.components[0].disabled_reason
 
     assert component.components[1].enabled
 
