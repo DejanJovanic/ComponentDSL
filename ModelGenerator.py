@@ -9,6 +9,17 @@ from Classes.Models import Models
 from ComponentValidator import ComponentValidator
 from ExplanationGenerator import ExplanationGenerator
 
+from Minimize_expression import simplify
+
+
+def minimize_function(expression_string):
+    return simplify(expression_string)
+
+
+def get_description(simplified_expression):
+    return "Feature requirement ({expr}) has not been met" \
+        .format(expr=simplified_expression)
+
 
 def check_name(model_name):
     if len(model_name) == 0 or model_name.isspace():
@@ -24,6 +35,7 @@ def check_component_tree_name(component, names):
 
     for comp in component.components or []:
         check_component_tree_name(comp, names)
+
 
 def model_validation(model):
     if isinstance(model, Models):
@@ -48,7 +60,7 @@ def model_check(model):
     ex = ExplanationGenerator()
     if isinstance(model, Models):
         cv.validate_models(model)
-        ex.set_models_disable_explanation(model)
+        ex.set_models_disable_explanation(model, minimize_function, get_description)
 
 
 def model_setup(model, metamodel):
